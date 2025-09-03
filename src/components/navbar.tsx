@@ -79,7 +79,7 @@ const Navbar = () => {
           <SignedOut>
             <div className="flex items-center gap-2 text-sm">
               <Image src="/login.png" alt="" width={20} height={20} />
-              <Link href="/sign-in">Login/Register</Link>
+              <Link href="/sign-in" className="text-gray-600">Login/Register</Link>
             </div>
           </SignedOut>
         </ClerkLoaded>
