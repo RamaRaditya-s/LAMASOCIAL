@@ -18,6 +18,7 @@ const Navbar = () => {
           LAMASOCIAL
         </Link>
       </div>
+
       {/* CENTER */}
       <div className="hidden md:flex w-[50%] text-sm items-center justify-between">
         {/* LINKS */}
@@ -53,16 +54,24 @@ const Navbar = () => {
             <span>Stories</span>
           </Link>
         </div>
-        <div className='hidden xl:flex p-2 bg-slate-100 items-center rounded-xl'>
-          <input type="text" placeholder="search..." className="bg-transparent outline-none"/>
-          <Image src="/search.png" alt="" width={14} height={14}/>
+
+        {/* SEARCH BAR */}
+        <div className="flex p-2 bg-slate-100 items-center rounded-xl">
+          <input
+            type="text"
+            placeholder="search..."
+            className="bg-transparent outline-none"
+          />
+          <Image src="/search.png" alt="Search" width={14} height={14} />
         </div>
       </div>
+
       {/* RIGHT */}
       <div className="w-[30%] flex items-center gap-4 xl:gap-8 justify-end">
         <ClerkLoading>
           <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white" />
         </ClerkLoading>
+
         <ClerkLoaded>
           <SignedIn>
             <div className="cursor-pointer">
@@ -76,13 +85,17 @@ const Navbar = () => {
             </div>
             <UserButton />
           </SignedIn>
+
           <SignedOut>
             <div className="flex items-center gap-2 text-sm">
               <Image src="/login.png" alt="" width={20} height={20} />
-              <Link href="/sign-in" className="text-gray-600">Login/Register</Link>
+              <Link href="/sign-in" className="text-gray-600">
+                Login/Register
+              </Link>
             </div>
           </SignedOut>
         </ClerkLoaded>
+
         <MobileMenu />
       </div>
     </div>
