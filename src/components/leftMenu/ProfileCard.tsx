@@ -4,11 +4,11 @@ import Link from "next/link";
 const ProfileCard = () => {
   // Data dummy
   const user = {
-    cover: "/noCover.png",
-    avatar: "/noAvatar.png",
-    name: "John",
-    surname: "Doe",
-    username: "johndoe",
+    cover: "/dummycover.png",
+    avatar: "/dummycover.png",
+    name: "Mr",
+    surname: "Amar",
+    username: "mramar",
     _count: {
       followers: 123,
     },
