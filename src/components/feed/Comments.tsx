@@ -1,17 +1,25 @@
+"use client";
+import { useEffect, useState } from "react";
 import CommentList from "./CommentList";
+import { getComments } from "@/services/commentService";
+import { Comment } from "@/types/comment";
 
-const dummyComments = [
-  {
-    id: 1,
-    desc: "Great post!",
-    user: { id: "1", username: "Alice", avatar: "/noAvatar.png" },
-  },
-];
+const Comments = () => {
+  const [comments, setComments] = useState<any[]>([]);
 
-export default function Comments() {
+  useEffect(() => {
+    const fetchComments = async () => {
+      const fetchedComments: Comment[] = await getComments();
+      setComments(fetchedComments);
+    };
+    fetchComments();
+  }, []);
+
   return (
     <div>
-      <CommentList comments={dummyComments} />
+      <CommentList comments={comments} />
     </div>
   );
-}
+};
+
+export default Comments;

@@ -2,6 +2,11 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import {
+  addComment,
+  deleteComment,
+  updateComment,
+} from "@/services/commentService";
 
 type User = {
   id: string;
@@ -20,20 +25,31 @@ type CommentType = {
 const CommentList = ({ comments }: { comments: CommentType[] }) => {
   const [desc, setDesc] = useState("");
   const [commentState, setCommentState] = useState(comments);
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editingDesc, setEditingDesc] = useState("");
 
-  const add = () => {
+  const handleAddComment = async () => {
     if (!desc) return;
-    const newComment: CommentType = {
-      id: Math.random(),
-      desc,
-      user: {
-        id: "guest",
-        username: "Guest",
-        avatar: "/noAvatar.png",
-      },
-    };
+    const newComment = await addComment(desc);
     setCommentState([newComment, ...commentState]);
     setDesc("");
+  };
+
+  const handleUpdateComment = async (id: number) => {
+    if (!editingDesc) return;
+    const updatedComment = await updateComment(id, editingDesc);
+    if (updatedComment) {
+      setCommentState(
+        commentState.map((c) => (c.id === id ? updatedComment : c))
+      );
+    }
+    setEditingCommentId(null);
+    setEditingDesc("");
+  };
+
+  const handleDeleteComment = async (id: number) => {
+    await deleteComment(id);
+    setCommentState(commentState.filter((c) => c.id !== id));
   };
 
   return (
@@ -49,7 +65,7 @@ const CommentList = ({ comments }: { comments: CommentType[] }) => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            add();
+            handleAddComment();
           }}
           className="flex-1 flex items-center justify-between bg-slate-100 rounded-xl text-sm px-6 py-2 w-full"
         >
@@ -86,7 +102,32 @@ const CommentList = ({ comments }: { comments: CommentType[] }) => {
                   ? `${comment.user.name} ${comment.user.surname}`
                   : comment.user.username}
               </span>
-              <p>{comment.desc}</p>
+              {editingCommentId === comment.id ? (
+                <div className="flex flex-col gap-2">
+                  <input
+                    type="text"
+                    className="bg-slate-100 rounded-xl text-sm px-6 py-2 w-full"
+                    value={editingDesc}
+                    onChange={(e) => setEditingDesc(e.target.value)}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      className="text-xs text-green-500"
+                      onClick={() => handleUpdateComment(comment.id)}
+                    >
+                      Save
+                    </button>
+                    <button
+                      className="text-xs text-red-500"
+                      onClick={() => setEditingCommentId(null)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p>{comment.desc}</p>
+              )}
               <div className="flex items-center gap-8 text-xs text-gray-500 mt-2">
                 <div className="flex items-center gap-4">
                   <Image
@@ -99,7 +140,21 @@ const CommentList = ({ comments }: { comments: CommentType[] }) => {
                   <span className="text-gray-300">|</span>
                   <span className="text-gray-500">0 Likes</span>
                 </div>
-                <div>Reply</div>
+                <div
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setEditingCommentId(comment.id);
+                    setEditingDesc(comment.desc);
+                  }}
+                >
+                  Edit
+                </div>
+                <div
+                  className="cursor-pointer"
+                  onClick={() => handleDeleteComment(comment.id)}
+                >
+                  Delete
+                </div>
               </div>
             </div>
             <Image
