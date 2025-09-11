@@ -1,35 +1,14 @@
 "use client";
 
+import { Story } from "@/types/story";
 import Image from "next/image";
 import { useState } from "react";
-
-type StoryWithUser = {
-  id: number;
-  img?: string;
-  createdAt: Date;
-  expiresAt: Date;
-  userId: string;
-  user: {
-    id: string;
-    username: string;
-    avatar: string;
-    cover: string;
-    description: string;
-    name: string;
-    surname: string;
-    city: string;
-    work: string;
-    school: string;
-    website: string;
-    createdAt: Date;
-  };
-};
 
 const StoryList = ({
   stories,
   userId,
 }: {
-  stories: StoryWithUser[];
+  stories: Story[];
   userId: string;
 }) => {
   const [storyList] = useState(stories);

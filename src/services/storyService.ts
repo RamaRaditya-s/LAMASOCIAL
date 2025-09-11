@@ -1,6 +1,7 @@
+import { Story } from "@/types/story";
 
 // dummy data
-const stories = [
+const stories: Story[] = [
   {
     id: 1,
     img: "/dummycover.png",
