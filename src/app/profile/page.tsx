@@ -19,7 +19,6 @@ const dummyUser = {
 };
 // ---------------------
 
-/* ----- Placeholders ----- */
 function FeedPlaceholder({ username }: { username?: string }) {
   return (
     <div className="p-4 bg-white rounded-md shadow-sm">
@@ -54,7 +53,6 @@ function LeftMenuPlaceholder() {
   );
 }
 
-/* ----- Dynamic imports (client-only) ----- */
 const Feed = dynamic(
   () => import("@/components/feed/Feed").then((mod) => mod.default ?? mod),
   { ssr: false, loading: () => <FeedPlaceholder username={dummyUser.username} /> }
@@ -71,7 +69,6 @@ const LeftMenu = dynamic(
   { ssr: false, loading: () => <LeftMenuPlaceholder /> }
 );
 
-/* ----- Page Component ----- */
 export default function ProfilePage() {
   const user = dummyUser;
 
