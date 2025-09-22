@@ -33,7 +33,7 @@ const Navbar = () => {
             />
             <span>Homepage</span>
           </Link>
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/friends" className="flex items-center gap-2">
             <Image
               src="/friends.png"
               alt="Friends"
@@ -43,7 +43,7 @@ const Navbar = () => {
             />
             <span>Friends</span>
           </Link>
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/stories" className="flex items-center gap-2">
             <Image
               src="/stories.png"
               alt="Stories"

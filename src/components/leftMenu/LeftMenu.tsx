@@ -9,7 +9,7 @@ const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
       {type === "home" && <ProfileCard />}
       <div className="p-4 bg-white rounded-lg shadow-md text-sm text-gray-500 flex flex-col gap-2">
         <Link
-          href="/"
+          href="/profile"
           className="flex items-center gap-4 p-2 rounded-lg hover:bg-slate-100"
         >
           <Image src="/events.png" alt="" width={20} height={20} />
@@ -17,7 +17,7 @@ const LeftMenu = ({ type }: { type: "home" | "profile" }) => {
         </Link>
         <hr className="border-t-1 border-gray-50 w-36 self-center" />
         <Link
-          href="/"
+          href="/activity"
           className="flex items-center gap-4 p-2 rounded-lg hover:bg-slate-100"
         >
           <Image src="/market.png" alt="" width={20} height={20} />
