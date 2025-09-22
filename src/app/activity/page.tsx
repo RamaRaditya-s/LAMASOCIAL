@@ -147,9 +147,11 @@ function MiniAnalytics() {
   return (
     <div>
       <h3 className="font-medium mb-2">Mini Analytics</h3>
-      <div style={{ height: 180 }}>
+
+      {/* Area Chart */}
+      <div className="w-full h-44">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={activityPerDay} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+          <AreaChart data={activityPerDay} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
             <defs>
               <linearGradient id="colorEvents" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
@@ -163,13 +165,19 @@ function MiniAnalytics() {
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      <BarChart width={300} height={120} data={activityPerDay} className="mt-4">
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="day" hide />
-        <YAxis hide />
-        <Tooltip />
-        <Bar dataKey="events" fill="#60a5fa" />
-      </BarChart>
+
+      {/* Bar Chart */}
+      <div className="w-full h-32 mt-4">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={activityPerDay} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="day" hide />
+            <YAxis hide />
+            <Tooltip />
+            <Bar dataKey="events" fill="#60a5fa" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
@@ -192,7 +200,6 @@ function SecurityLogs() {
 export default function ActivityPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  // contoh: filter atau pencarian bisa ditambahkan di sini
   const filtered = useMemo(
     () => dummyActivity.sort((a, b) => +new Date(b.time) - +new Date(a.time)),
     []
