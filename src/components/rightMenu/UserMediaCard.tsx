@@ -34,4 +34,4 @@ const UserMediaCard = ({ user }: { user: any }) => {
   );
 };
 
-export default UserMediaCard;
+export default UserMediaCard; 

@@ -1,7 +1,161 @@
-const SettingPage = () => {
-  return (
-    <div className=''>SettingPage</div>
-  )
-}
+"use client";
 
-export default SettingPage
+import dynamic from "next/dynamic";
+import { useState } from "react";
+
+/* ------------------ Dummy User ------------------ */
+const dummyUser = {
+  username: "john_doe",
+  name: "John Doe",
+  email: "john@example.com",
+  avatar: "/dummyCover.png",
+  _count: { posts: 12, followers: 340, followings: 180 },
+};
+
+/* ------------------ Dynamic Imports ------------------ */
+const LeftMenu = dynamic(
+  () => import("@/components/leftMenu/LeftMenu").then((m) => m.default ?? m),
+  { ssr: false }
+);
+const RightMenu = dynamic(
+  () => import("@/components/rightMenu/RightMenu").then((m) => m.default ?? m),
+  { ssr: false }
+);
+
+/* ------------------ Settings Tabs ------------------ */
+const tabs = ["Account", "Privacy", "Notifications", "Appearance", "Connections"];
+
+export default function SettingsPage() {
+  const [activeTab, setActiveTab] = useState("Account");
+
+  return (
+    <div className="flex gap-6 pt-6">
+      {/* LEFT MENU */}
+      <LeftMenu />
+
+      {/* MAIN CONTENT */}
+      <main className="w-full lg:w-[70%] xl:w-[60%] flex flex-col gap-6">
+        {/* Header */}
+        <section className="bg-white rounded-md shadow-sm p-4">
+          <h2 className="font-semibold text-lg">Settings</h2>
+          <p className="text-sm text-gray-500">
+            Manage your account and privacy preferences
+          </p>
+        </section>
+
+        {/* Tabs + Content */}
+        <div className="flex flex-col md:flex-row bg-white rounded-md shadow-sm">
+          {/* Tabs Sidebar */}
+          <aside className="md:w-1/4 border-b md:border-b-0 md:border-r">
+            {tabs.map((t) => (
+              <button
+                key={t}
+                onClick={() => setActiveTab(t)}
+                className={`w-full text-left px-4 py-3 hover:bg-gray-100 ${
+                  activeTab === t ? "bg-gray-100 font-medium" : ""
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </aside>
+
+          {/* Tab Content */}
+          <div className="flex-1 p-6 space-y-6">
+            {activeTab === "Account" && (
+              <div>
+                <h3 className="font-semibold mb-4">Account Information</h3>
+                <form className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Name</label>
+                    <input
+                      type="text"
+                      defaultValue={dummyUser.name}
+                      className="w-full border rounded-md p-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Username</label>
+                    <input
+                      type="text"
+                      defaultValue={dummyUser.username}
+                      className="w-full border rounded-md p-2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Email</label>
+                    <input
+                      type="email"
+                      defaultValue={dummyUser.email}
+                      className="w-full border rounded-md p-2"
+                    />
+                  </div>
+                  <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                    Save Changes
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {activeTab === "Privacy" && (
+              <div>
+                <h3 className="font-semibold mb-4">Privacy & Security</h3>
+                <div className="space-y-4">
+                  <label className="flex items-center gap-3">
+                    <input type="checkbox" defaultChecked />
+                    Make my profile private
+                  </label>
+                  <label className="flex items-center gap-3">
+                    <input type="checkbox" />
+                    Enable two-factor authentication
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "Notifications" && (
+              <div>
+                <h3 className="font-semibold mb-4">Notifications</h3>
+                <div className="space-y-4">
+                  <label className="flex items-center gap-3">
+                    <input type="checkbox" defaultChecked />
+                    Email notifications
+                  </label>
+                  <label className="flex items-center gap-3">
+                    <input type="checkbox" />
+                    Push notifications
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "Appearance" && (
+              <div>
+                <h3 className="font-semibold mb-4">Appearance</h3>
+                <label className="flex items-center gap-3">
+                  <input type="checkbox" />
+                  Dark Mode
+                </label>
+              </div>
+            )}
+
+            {activeTab === "Connections" && (
+              <div>
+                <h3 className="font-semibold mb-4">Connections</h3>
+                <p className="text-sm text-gray-600">
+                  Link or unlink your other social media accounts.
+                </p>
+                {/* Tambahkan tombol connect ke Twitter/Instagram dsb */}
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+
+      {/* RIGHT MENU */}
+      <div className="hidden lg:block w-[30%]">
+        <RightMenu user={dummyUser} />
+      </div>
+    </div>
+  );
+}
