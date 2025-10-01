@@ -5,8 +5,13 @@ import UserInfoCard from "./UserInfoCard";
 import UserMediaCard from "./UserMediaCard";
 import { Suspense } from "react";
 
+import UserInfoCardSkeleton from "../skeleton/UserInfoCardSkeleton";
+import UserMediaCardSkeleton from "../skeleton/UserMediaCardSkeleton";
+import FriendRequestsSkeleton from "../skeleton/FriendRequestsSkeleton";
+import BirthdaysSkeleton from "../skeleton/BirthdaysSkeleton";
+import AdSkeleton from "../skeleton/AdSkeleton";
+
 export default function RightMenu() {
-  // user dummy untuk contoh tampilan
   const dummyUser = {
     id: "1",
     username: "dummyuser",
@@ -23,15 +28,25 @@ export default function RightMenu() {
 
   return (
     <div className="flex flex-col gap-6">
-      <Suspense fallback="loading...">
+      <Suspense fallback={<UserInfoCardSkeleton />}>
         <UserInfoCard user={dummyUser} />
       </Suspense>
-      <Suspense fallback="loading...">
+
+      <Suspense fallback={<UserMediaCardSkeleton />}>
         <UserMediaCard user={dummyUser} />
       </Suspense>
-      <FriendRequests />
-      <Birthdays />
-      <Ad size="md" />
+
+      <Suspense fallback={<FriendRequestsSkeleton />}>
+        <FriendRequests />
+      </Suspense>
+
+      <Suspense fallback={<BirthdaysSkeleton />}>
+        <Birthdays />
+      </Suspense>
+
+      <Suspense fallback={<AdSkeleton />}>
+        <Ad size="md" />
+      </Suspense>
     </div>
   );
 }
