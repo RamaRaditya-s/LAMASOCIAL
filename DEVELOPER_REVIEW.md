@@ -24,7 +24,7 @@
 - **UI Consistency:** Placeholder components are basic and may not match the final design system.
 
 *Note: These weaknesses are expected at this stage, as the current focus is on frontend prototyping. Addressing them will be important as the project matures and API integration begins.*
-## Code Review & KPI Analysis: `src/app/stories/page.tsx`
+## Code Review & KPI Analysis
 
 ### 1. Next.js/React Usage
 - **File Type:** React Server Component (with `"use client"` for client-side interactivity).
@@ -59,7 +59,3 @@
 - **No API Integration:** Currently uses dummy data; real implementation would fetch from a backend.
 - **Accessibility:** Modal uses overlay and close button, but could improve ARIA attributes.
 - **Code Quality:** Clean, readable, and modular.
-
----
-
-*For broader KPI review, request analysis of additional files or components as needed.*
