@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import CommentList from "./CommentList";
+import CommentList, { CommentType } from "./CommentList";
 import { getComments } from "@/services/commentService";
 import { Comment } from "@/types/comment";
 
@@ -9,7 +9,7 @@ const Comments = () => {
 
   useEffect(() => {
     const fetchComments = async () => {
-      const fetchedComments: Comment[] = await getComments();
+      const fetchedComments: CommentType[] = await getComments();
       setComments(fetchedComments);
     };
     fetchComments();

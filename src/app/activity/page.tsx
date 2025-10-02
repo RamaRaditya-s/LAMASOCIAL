@@ -207,7 +207,7 @@ export default function ActivityPage() {
 
   return (
     <div className="flex gap-6 pt-6">
-      <LeftMenu />
+      <LeftMenu type={"home"} />
 
       <main className="w-full lg:w-[70%] xl:w-[60%] flex flex-col gap-6">
         {/* Header */}
@@ -235,7 +235,7 @@ export default function ActivityPage() {
       </main>
 
       <div className="hidden lg:block w-[30%]">
-        <RightMenu user={dummyUser} />
+        <RightMenu />
       </div>
     </div>
   );

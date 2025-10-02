@@ -16,7 +16,7 @@ type User = {
   avatar?: string;
 };
 
-type CommentType = {
+export type CommentType = {
   id: number;
   desc: string;
   user: User;
@@ -24,7 +24,7 @@ type CommentType = {
 
 const CommentList = ({ comments }: { comments: CommentType[] }) => {
   const [desc, setDesc] = useState("");
-  const [commentState, setCommentState] = useState(comments);
+  const [commentState, setCommentState] = useState<CommentType[]>(comments);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editingDesc, setEditingDesc] = useState("");
 

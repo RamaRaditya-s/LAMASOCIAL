@@ -111,7 +111,7 @@ export default function ListsPage() {
 
   return (
     <div className="flex gap-6 pt-6">
-      <LeftMenu />
+      <LeftMenu type={"home"} />
 
       <main className="w-full lg:w-[70%] xl:w-[60%] flex flex-col gap-8">
         {/* Header */}
@@ -216,7 +216,7 @@ export default function ListsPage() {
 
       {/* Right Menu */}
       <div className="hidden lg:block w-[30%]">
-        <RightMenu user={{ username: "john_doe", name: "John Doe", avatar: "/dummyCover.png" }} />
+        <RightMenu />
       </div>
 
       {/* Detail Modal (when a list is selected) */}

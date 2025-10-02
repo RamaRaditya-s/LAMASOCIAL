@@ -1,6 +1,7 @@
+import { CommentType } from "@/components/feed/CommentList";
 import { Comment } from "@/types/comment";
 
-let dummyComments: Comment[] = [
+let dummyComments: CommentType[] = [
   {
     id: 1,
     desc: "Great post!",
@@ -14,7 +15,7 @@ let dummyComments: Comment[] = [
 ];
 
 // Simulate API call
-export const getComments = async (): Promise<Comment[]> => {
+export const getComments = async (): Promise<CommentType[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(dummyComments);
@@ -22,7 +23,7 @@ export const getComments = async (): Promise<Comment[]> => {
   });
 };
 
-export const addComment = async (desc: string) => {
+export const addComment = async (desc: string): Promise<CommentType> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       const newComment = {
@@ -36,7 +37,7 @@ export const addComment = async (desc: string) => {
   });
 };
 
-export const updateComment = async (id: number, desc: string) => {
+export const updateComment = async (id: number, desc: string): Promise<CommentType | undefined> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       const comment = dummyComments.find((c) => c.id === id);

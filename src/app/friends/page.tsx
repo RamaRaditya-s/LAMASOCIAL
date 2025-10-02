@@ -183,7 +183,7 @@ export default function FriendsPage() {
 
   return (
     <div className="flex gap-6 pt-6">
-      <LeftMenu />
+      <LeftMenu type={"home"} />
       <div className="w-full lg:w-[70%] xl:w-[50%] flex flex-col gap-6">
         <div className="flex flex-col items-center justify-center">
           <div className="w-full h-64 relative">
@@ -203,7 +203,7 @@ export default function FriendsPage() {
         </div>
       </div>
       <div className="hidden lg:block w-[30%]">
-        <RightMenu user={user} />
+        <RightMenu />
       </div>
     </div>
   );

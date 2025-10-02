@@ -133,7 +133,7 @@ export default function StoriesPage() {
 
   return (
     <div className="flex gap-6 pt-6">
-      <LeftMenu />
+      <LeftMenu type={"home"} />
       <div className="w-full lg:w-[70%] xl:w-[50%] flex flex-col gap-8">
         <div className="flex flex-col items-center">
           <div className="w-full h-56 relative">
@@ -160,7 +160,7 @@ export default function StoriesPage() {
         <StoryViewer />
       </div>
       <div className="hidden lg:block w-[30%]">
-        <RightMenu user={user} />
+        <RightMenu />
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import AddPost from "@/components/AddPost";
 import Stories from "@/components/Stories";

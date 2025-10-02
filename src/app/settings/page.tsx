@@ -31,7 +31,7 @@ export default function SettingsPage() {
   return (
     <div className="flex gap-6 pt-6">
       {/* LEFT MENU */}
-      <LeftMenu />
+      <LeftMenu type={"home"} />
 
       {/* MAIN CONTENT */}
       <main className="w-full lg:w-[70%] xl:w-[60%] flex flex-col gap-6">
@@ -154,7 +154,7 @@ export default function SettingsPage() {
 
       {/* RIGHT MENU */}
       <div className="hidden lg:block w-[30%]">
-        <RightMenu user={dummyUser} />
+        <RightMenu  />
       </div>
     </div>
   );

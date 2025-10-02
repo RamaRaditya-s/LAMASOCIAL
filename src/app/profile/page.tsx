@@ -75,7 +75,7 @@ export default function ProfilePage() {
   return (
     <div className="flex gap-6 pt-6">
       {/* LEFT MENU */}
-      <LeftMenu />
+      <LeftMenu type={"home"} />
 
       {/* MAIN CONTENT */}
       <div className="w-full lg:w-[70%] xl:w-[50%]">
@@ -125,7 +125,7 @@ export default function ProfilePage() {
 
       {/* RIGHT MENU (dynamic) */}
       <div className="hidden lg:block w-[30%]">
-        <RightMenu user={user} />
+        <RightMenu />
       </div>
     </div>
   );
