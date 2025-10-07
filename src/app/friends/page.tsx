@@ -74,6 +74,11 @@ const RightMenu = dynamic(
   { ssr: false, loading: () => <RightMenuPlaceholder user={dummyUser} /> }
 );
 
+const FriendsPageSkeleton = dynamic(
+  () => import("@/components/skeleton/FriendsPageSkeleton").then((mod) => mod.default ?? mod),
+  { ssr: false }
+);
+
 function FriendStories() {
   return (
     <div>
@@ -179,7 +184,19 @@ function FriendsFullList() {
 }
 
 export default function FriendsPage() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading state - in real app, you'd set this based on data fetching
+  useState(() => {
+    const timer = setTimeout(() => setIsLoading(false), 2000);
+    return () => clearTimeout(timer);
+  });
+
   const user = dummyUser;
+
+  if (isLoading) {
+    return <FriendsPageSkeleton />;
+  }
 
   return (
     <div className="flex gap-6 pt-6">

@@ -2,7 +2,8 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import StoriesPageSkeleton from "@/components/skeleton/StoriesPageSkeleton";
 
 // ---- Dummy Data ----
 const dummyUser = {
@@ -130,6 +131,20 @@ function StoryViewer() {
 // ---- Main Page ----
 export default function StoriesPage() {
   const user = dummyUser;
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <StoriesPageSkeleton />;
+  }
 
   return (
     <div className="flex gap-6 pt-6">

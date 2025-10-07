@@ -2,7 +2,8 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import EventPageSkeleton from "@/components/skeleton/EventPageSkeleton";
 
 /* ------------------ Dummy Data ------------------ */
 const dummyUser = {
@@ -154,11 +155,25 @@ function EventDetail({
 export default function EventPage() {
   const [selected, setSelected] = useState<(typeof events)[0] | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>("All");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredEvents =
     categoryFilter === "All"
       ? events
       : events.filter((e) => e.category === categoryFilter);
+
+  if (loading) {
+    return <EventPageSkeleton />;
+  }
 
   return (
     <div className="flex gap-6 pt-6">
