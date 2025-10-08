@@ -2,7 +2,8 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import ProfilePageSkeleton from "@/components/skeleton/ProfilePageSkeleton";
 
 // ---- Data Dummy ----
 const dummyUser = {
@@ -71,6 +72,20 @@ const LeftMenu = dynamic(
 
 export default function ProfilePage() {
   const user = dummyUser;
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <ProfilePageSkeleton />;
+  }
 
   return (
     <div className="flex gap-6 pt-6">
