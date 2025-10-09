@@ -3,6 +3,8 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import AlbumDetailSkeleton from "@/components/skeleton/AlbumDetailSkeleton";
 
 /* ------------------ Dummy Data ------------------ */
 // Sementara data contoh, nanti bisa diganti fetch API/database
@@ -20,19 +22,59 @@ const dummyPhotos = [
   { id: "p4", url: "/dummyCover.png" },
 ];
 
+/* ------------------ Placeholders ------------------ */
+function LeftMenuPlaceholder() {
+  return (
+    <div className="hidden xl:block w-[20%]">
+      <div className="p-4 bg-white rounded-md shadow-sm">Left Menu</div>
+    </div>
+  );
+}
+
+function RightMenuPlaceholder({ user }: { user: any }) {
+  return (
+    <div className="p-4 bg-white rounded-md shadow-sm sticky top-6">
+      <h3 className="font-medium mb-2">About {user.name}</h3>
+      <p className="text-sm text-gray-600">Followers: {user._count.followers}</p>
+      <p className="text-sm text-gray-600">Following: {user._count.followings}</p>
+    </div>
+  );
+}
+
 /* ------------------ Dynamic Imports ------------------ */
 const LeftMenu = dynamic(
   () => import("@/components/leftMenu/LeftMenu").then((m) => m.default ?? m),
-  { ssr: false }
+  { 
+    ssr: false,
+    loading: () => <LeftMenuPlaceholder />
+  }
 );
+
 const RightMenu = dynamic(
   () => import("@/components/rightMenu/RightMenu").then((m) => m.default ?? m),
-  { ssr: false }
+  { 
+    ssr: false,
+    loading: () => <RightMenuPlaceholder user={dummyUser} />
+  }
 );
 
 /* ------------------ Album Detail Page ------------------ */
 export default function AlbumDetailPage() {
   const { id } = useParams();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay for album data
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <AlbumDetailSkeleton />;
+  }
 
   return (
     <div className="flex gap-6 pt-6">
