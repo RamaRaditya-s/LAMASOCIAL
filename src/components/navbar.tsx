@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import MobileMenu from "./MobileMenu";
 import Image from "next/image";
@@ -8,8 +10,25 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import { useState, useEffect } from "react";
+import NavbarSkeleton from "./skeleton/NavbarSkeleton";
 
 const Navbar = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay for navbar
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <NavbarSkeleton />;
+  }
+
   return (
     <div className="h-24 flex items-center justify-between">
       {/* LEFT */}
@@ -23,7 +42,7 @@ const Navbar = () => {
       <div className="hidden md:flex w-[50%] text-sm items-center justify-between">
         {/* LINKS */}
         <div className="flex gap-6 text-gray-600">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 hover:text-blue-600 transition-colors">
             <Image
               src="/home.png"
               alt="Homepage"
@@ -33,7 +52,7 @@ const Navbar = () => {
             />
             <span>Homepage</span>
           </Link>
-          <Link href="/friends" className="flex items-center gap-2">
+          <Link href="/friends" className="flex items-center gap-2 hover:text-blue-600 transition-colors">
             <Image
               src="/friends.png"
               alt="Friends"
@@ -43,7 +62,7 @@ const Navbar = () => {
             />
             <span>Friends</span>
           </Link>
-          <Link href="/stories" className="flex items-center gap-2">
+          <Link href="/stories" className="flex items-center gap-2 hover:text-blue-600 transition-colors">
             <Image
               src="/stories.png"
               alt="Stories"
@@ -56,11 +75,11 @@ const Navbar = () => {
         </div>
 
         {/* SEARCH BAR */}
-        <div className="flex p-2 bg-slate-100 items-center rounded-xl">
+        <div className="flex p-2 bg-slate-100 items-center rounded-xl border border-transparent focus-within:border-blue-300 transition-colors">
           <input
             type="text"
             placeholder="search..."
-            className="bg-transparent outline-none"
+            className="bg-transparent outline-none w-40"
           />
           <Image src="/search.png" alt="Search" width={14} height={14} />
         </div>
@@ -69,26 +88,32 @@ const Navbar = () => {
       {/* RIGHT */}
       <div className="w-[30%] flex items-center gap-4 xl:gap-8 justify-end">
         <ClerkLoading>
-          <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white" />
+          <div className="flex items-center gap-4">
+            {/* Icons Skeleton while Clerk loads */}
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="w-6 h-6 bg-gray-300 rounded animate-pulse"></div>
+            ))}
+            <div className="w-8 h-8 bg-gray-300 rounded-full animate-pulse"></div>
+          </div>
         </ClerkLoading>
 
         <ClerkLoaded>
           <SignedIn>
-            <div className="cursor-pointer">
-              <Image src="/people.png" alt="" width={24} height={24} />
+            <div className="cursor-pointer hover:opacity-80 transition-opacity">
+              <Image src="/people.png" alt="People" width={24} height={24} />
             </div>
-            <div className="cursor-pointer">
-              <Image src="/messages.png" alt="" width={20} height={20} />
+            <div className="cursor-pointer hover:opacity-80 transition-opacity">
+              <Image src="/messages.png" alt="Messages" width={20} height={20} />
             </div>
-            <div className="cursor-pointer">
-              <Image src="/notifications.png" alt="" width={20} height={20} />
+            <div className="cursor-pointer hover:opacity-80 transition-opacity">
+              <Image src="/notifications.png" alt="Notifications" width={20} height={20} />
             </div>
             <UserButton />
           </SignedIn>
 
           <SignedOut>
-            <div className="flex items-center gap-2 text-sm">
-              <Image src="/login.png" alt="" width={20} height={20} />
+            <div className="flex items-center gap-2 text-sm hover:text-blue-600 transition-colors">
+              <Image src="/login.png" alt="Login" width={20} height={20} />
               <Link href="/sign-in" className="text-gray-600">
                 Login/Register
               </Link>

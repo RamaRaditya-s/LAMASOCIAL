@@ -2,11 +2,22 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import ListsPageSkeleton, { ListModalSkeleton } from "@/components/skeleton/ListsPageSkeleton";
+import RightMenuSkeleton from "@/components/skeleton/RightMenuSkeleton";
+import LeftMenuSkeleton from "@/components/skeleton/LeftMenuSkeleton";
 
-/* ------------------ Dynamic Menus (your existing components) ------------------ */
-const LeftMenu = dynamic(() => import("@/components/leftMenu/LeftMenu").then((m) => m.default ?? m), { ssr: false });
-const RightMenu = dynamic(() => import("@/components/rightMenu/RightMenu").then((m) => m.default ?? m), { ssr: false });
+/* ------------------ Dynamic Menus with Skeleton Loading ------------------ */
+const LeftMenu = dynamic(() => import("@/components/leftMenu/LeftMenu").then((m) => m.default ?? m), { 
+  ssr: false,
+  loading: () => <LeftMenuSkeleton />
+});
+
+const RightMenu = dynamic(() => import("@/components/rightMenu/RightMenu").then((m) => m.default ?? m), { 
+  ssr: false,
+  loading: () => <RightMenuSkeleton />
+});
 
 /* ------------------ Dummy Data ------------------ */
 type ItemType = "video" | "photo" | "post";
@@ -79,9 +90,32 @@ function TypeBadge({ type }: { type: ItemType }) {
 
 /* ------------------ Main Page ------------------ */
 export default function ListsPage() {
+  const router = useRouter();
   const [lists, setLists] = useState<WatchList[]>(dummyLists);
   const [selected, setSelected] = useState<WatchList | null>(null);
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [modalLoading, setModalLoading] = useState(false);
+
+  useEffect(() => {
+    // Simulate loading delay for lists data
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Simulate modal loading when a list is selected
+  useEffect(() => {
+    if (selected) {
+      setModalLoading(true);
+      const timer = setTimeout(() => {
+        setModalLoading(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [selected]);
 
   const filtered = useMemo(() => {
     if (!query.trim()) return lists;
@@ -107,6 +141,22 @@ export default function ListsPage() {
       items: [],
     };
     setLists((p) => [newList, ...p]);
+  }
+
+  // Function to handle album click
+  function handleAlbumClick(list: WatchList) {
+    // Navigate to list detail page
+    router.push(`/lists/${list.id}`);
+  }
+
+  // Function to handle open button click (to prevent event bubbling)
+  function handleOpenClick(e: React.MouseEvent, list: WatchList) {
+    e.stopPropagation();
+    setSelected(list);
+  }
+
+  if (loading) {
+    return <ListsPageSkeleton />;
   }
 
   return (
@@ -147,7 +197,11 @@ export default function ListsPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((l) => (
-              <article key={l.id} className="bg-white rounded-md shadow-sm hover:shadow-md transition cursor-pointer group">
+              <article 
+                key={l.id} 
+                className="bg-white rounded-md shadow-sm hover:shadow-md transition cursor-pointer group"
+                onClick={() => handleAlbumClick(l)}
+              >
                 {/* Cover */}
                 <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-md">
                   <Image src={l.cover} alt={l.name} fill className="object-cover group-hover:scale-105 transition-transform" />
@@ -170,14 +224,17 @@ export default function ListsPage() {
                     <div className="flex items-center gap-2">
                       <button
                         aria-label={`open ${l.name}`}
-                        onClick={() => setSelected(l)}
+                        onClick={(e) => handleOpenClick(e, l)}
                         className="text-sm bg-amber-50 text-amber-700 px-2 py-1 rounded-md hover:bg-amber-100"
                       >
                         Open
                       </button>
                       <button
                         aria-label={`delete ${l.name}`}
-                        onClick={() => handleDeleteList(l.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteList(l.id);
+                        }}
                         className="text-sm bg-red-50 text-red-700 px-2 py-1 rounded-md hover:bg-red-100"
                       >
                         Delete
@@ -230,58 +287,64 @@ export default function ListsPage() {
           <div className="absolute inset-0 bg-black/40" onClick={() => setSelected(null)} />
 
           <div className="relative bg-white rounded-t-xl md:rounded-xl w-full md:w-11/12 lg:w-3/4 max-h-[90vh] overflow-auto shadow-2xl p-4 md:p-6 z-10">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="relative w-20 h-20 rounded-md overflow-hidden border border-gray-100">
-                  <Image src={selected.cover} alt={selected.name} fill className="object-cover" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">{selected.name}</h3>
-                  <p className="text-sm text-gray-500">{selected.items.length} items • updated {selected.updatedAt}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button onClick={() => setSelected(null)} className="text-sm px-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200">
-                  Close
-                </button>
-              </div>
-            </div>
-
-            <hr className="my-4" />
-
-            {/* Filters for items inside the list */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-              <div className="flex items-center gap-3">
-                <TypeFilter />
-              </div>
-              <div className="text-sm text-gray-500">Showing {selected.items.length} item(s)</div>
-            </div>
-
-            {/* Items Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {selected.items.map((it) => (
-                <div key={it.id} className="bg-white rounded-md shadow-sm overflow-hidden">
-                  <div className="relative w-full aspect-[9/16] bg-gray-100">
-                    <Image src={it.thumb} alt={it.title} fill className="object-cover" />
-                    <div className="absolute top-3 left-3">
-                      <TypeBadge type={it.type} />
+            {modalLoading ? (
+              <ListModalSkeleton />
+            ) : (
+              <>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="relative w-20 h-20 rounded-md overflow-hidden border border-gray-100">
+                      <Image src={selected.cover} alt={selected.name} fill className="object-cover" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">{selected.name}</h3>
+                      <p className="text-sm text-gray-500">{selected.items.length} items • updated {selected.updatedAt}</p>
                     </div>
                   </div>
 
-                  <div className="p-3">
-                    <h4 className="font-semibold truncate">{it.title}</h4>
-                    <p className="text-xs text-gray-500">{it.meta}</p>
-
-                    <div className="mt-3 flex items-center gap-2">
-                      <button className="text-xs px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700">Open</button>
-                      <button className="text-xs px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200">Remove</button>
-                      <button className="ml-auto text-xs px-2 py-1 rounded-md bg-amber-50 text-amber-700">Share</button>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => setSelected(null)} className="text-sm px-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200">
+                      Close
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
+
+                <hr className="my-4" />
+
+                {/* Filters for items inside the list */}
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                  <div className="flex items-center gap-3">
+                    <TypeFilter />
+                  </div>
+                  <div className="text-sm text-gray-500">Showing {selected.items.length} item(s)</div>
+                </div>
+
+                {/* Items Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {selected.items.map((it) => (
+                    <div key={it.id} className="bg-white rounded-md shadow-sm overflow-hidden">
+                      <div className="relative w-full aspect-[9/16] bg-gray-100">
+                        <Image src={it.thumb} alt={it.title} fill className="object-cover" />
+                        <div className="absolute top-3 left-3">
+                          <TypeBadge type={it.type} />
+                        </div>
+                      </div>
+
+                      <div className="p-3">
+                        <h4 className="font-semibold truncate">{it.title}</h4>
+                        <p className="text-xs text-gray-500">{it.meta}</p>
+
+                        <div className="mt-3 flex items-center gap-2">
+                          <button className="text-xs px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700">Open</button>
+                          <button className="text-xs px-3 py-1 rounded-md bg-gray-100 hover:bg-gray-200">Remove</button>
+                          <button className="ml-auto text-xs px-2 py-1 rounded-md bg-amber-50 text-amber-700">Share</button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
