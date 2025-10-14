@@ -1,8 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import SkeletonNavbar from "@/components/skeleton/SkeletonNavbar";
 
 export default function Navbar() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulasi loading (contohnya 1 detik)
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) return <SkeletonNavbar />;
+
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+    <header className="bg-white shadow-md px-6 py-3 flex items-center justify-between">
       <input
         type="text"
         placeholder="Search..."

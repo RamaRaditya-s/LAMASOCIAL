@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Sidebar from "@/components/admin/Sidebar";
-import Navbar from "@/components/admin/Navbar";
+import Navbar from "@/components/admin/AdminNavbar";
 import DashboardPage from "@/components/admin/DashboardPage";
 
 export default function AdminPage() {
@@ -16,14 +16,20 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="flex h-screen bg-transparent text-gray-800">
+    <div className="flex min-h-screen bg-gray-100 text-gray-800">
       {/* Sidebar */}
-      <Sidebar activePage={activePage} setActivePage={setActivePage} />
+      <div className="h-auto self-start mt-4 ml-4">
+        <Sidebar activePage={activePage} setActivePage={setActivePage} />
+      </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        <Navbar />
+      <div className="flex-1 flex flex-col p-6 gap-6">
+        {/* Navbar */}
+        <div className="mt-2">
+          <Navbar />
+        </div>
 
+        {/* Main Section */}
         <main className="flex-1 overflow-y-auto">
           {activePage === "dashboard" && <DashboardPage stats={dummyStats} />}
           {activePage === "users" && (

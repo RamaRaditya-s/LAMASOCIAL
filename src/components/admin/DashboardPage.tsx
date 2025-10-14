@@ -1,6 +1,7 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import StatCard from "./StatCard";
+import DashboardSkeleton from "@/components/skeleton/DashboardSkeleton";
 
 const Icons = {
   Users: () => <span className="text-2xl">👥</span>,
@@ -16,7 +17,26 @@ const dummyReports = [
   { id: "r3", type: "Inappropriate", user: "user789", status: "Resolved", date: "2024-01-18" },
 ];
 
-export default function DashboardPage({ stats }: { stats: any }) {
+export default function DashboardPage() {
+  const [stats, setStats] = useState<any | null>(null);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setStats({
+        totalUsers: 1200,
+        totalPosts: 340,
+        totalReports: 12,
+        totalComments: 780,
+      });
+    }, 2000);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  if (!stats) {
+    return <DashboardSkeleton />;
+  }
+
   const statCards = [
     { label: "Total Users", value: stats.totalUsers, icon: Icons.Users, color: "bg-blue-100 text-blue-600" },
     { label: "Total Posts", value: stats.totalPosts, icon: Icons.Posts, color: "bg-green-100 text-green-600" },
@@ -33,7 +53,7 @@ export default function DashboardPage({ stats }: { stats: any }) {
       </section>
 
       {/* Stats Grid */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((stat, i) => (
           <StatCard key={i} {...stat} />
         ))}
