@@ -51,75 +51,106 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="animate-pulse bg-white rounded-2xl shadow-sm p-6 h-[320px]"
-          >
-            <div className="h-6 w-1/3 bg-gray-200 rounded mb-4"></div>
-            <div className="h-[240px] bg-gray-100 rounded"></div>
-          </div>
-        ))}
+      <div className="flex flex-col gap-6">
+        {/* Header Section Skeleton */}
+        <section className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+          <div className="h-7 w-1/3 bg-gray-200 rounded mb-2"></div>
+          <div className="h-4 w-1/4 bg-gray-200 rounded"></div>
+        </section>
+
+        {/* Stats Grid Skeleton */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="animate-pulse bg-white rounded-lg shadow-md border border-gray-100 p-6"
+            >
+              <div className="h-6 w-2/3 bg-gray-200 rounded mb-4"></div>
+              <div className="h-8 w-1/2 bg-gray-200 rounded"></div>
+            </div>
+          ))}
+        </section>
+
+        {/* Charts Skeleton */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {[1, 2].map((i) => (
+            <div
+              key={i}
+              className="animate-pulse bg-white rounded-lg shadow-md border border-gray-100 p-6"
+            >
+              <div className="h-6 w-1/3 bg-gray-200 rounded mb-4"></div>
+              <div className="h-64 bg-gray-100 rounded"></div>
+            </div>
+          ))}
+        </section>
       </div>
     );
   }
 
   return (
-    <div className="p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {/* Visitors Chart */}
-      <div className="bg-white rounded-2xl shadow-sm p-6">
-        <h2 className="text-lg font-semibold mb-4">Monthly Visitors</h2>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={visitorData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="visitors"
-              stroke="#fec107"
-              strokeWidth={3}
-              dot={{ r: 4 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+    <div className="flex flex-col gap-6">
+      {/* Header Section */}
+      <section className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+        <h1 className="text-2xl font-bold text-gray-900">Analytics Overview</h1>
+        <p className="text-gray-600 mt-1">Website performance analytics</p>
+      </section>
 
-      {/* Posts Activity */}
-      <div className="bg-white rounded-2xl shadow-sm p-6">
-        <h2 className="text-lg font-semibold mb-4">Weekly Post Activity</h2>
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={postData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="day" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="posts" fill="#fec107" radius={[6, 6, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      {/* Charts Grid */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Visitors Chart */}
+        <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Monthly Visitors</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={visitorData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="visitors"
+                stroke="#fec107"
+                strokeWidth={3}
+                dot={{ r: 4 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
 
-      {/* User Growth */}
-      <div className="bg-white rounded-2xl shadow-sm p-6">
-        <h2 className="text-lg font-semibold mb-4">User Growth</h2>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={userGrowthData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="users"
-              stroke="#16a34a"
-              strokeWidth={3}
-              dot={{ r: 4 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+        {/* Posts Activity */}
+        <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">Weekly Post Activity</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={postData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="day" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="posts" fill="#fec107" radius={[6, 6, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* User Growth */}
+        <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">User Growth</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={userGrowthData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="users"
+                stroke="#16a34a"
+                strokeWidth={3}
+                dot={{ r: 4 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
     </div>
   );
 }

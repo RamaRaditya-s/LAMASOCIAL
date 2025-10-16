@@ -14,7 +14,6 @@ export default function Sidebar({ activePage, setActivePage }: SidebarProps) {
     { key: "posts", label: "📝 Posts" },
     { key: "reports", label: "🚫 Reports" },
     { key: "analytics", label: "📊 Analytics" },
-    { key: "settings", label: "⚙️ Settings" },
   ];
 
   return (

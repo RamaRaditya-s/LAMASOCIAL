@@ -17,7 +17,6 @@ const Navbar = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading delay for navbar
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1500);
@@ -30,19 +29,22 @@ const Navbar = () => {
   }
 
   return (
-    <div className="h-24 flex items-center justify-between">
+    <div className="h-24 flex items-center justify-between px-4 md:px-8 flex-wrap gap-3">
       {/* LEFT */}
-      <div className="md:hidden lg:block w-[20%]">
+      <div className="w-auto">
         <Link href="/" className="font-bold text-xl text-blue-600">
           LAMASOCIAL
         </Link>
       </div>
 
       {/* CENTER */}
-      <div className="hidden md:flex w-[50%] text-sm items-center justify-between">
+      <div className="hidden md:flex flex-1 justify-center items-center text-sm gap-8">
         {/* LINKS */}
         <div className="flex gap-6 text-gray-600">
-          <Link href="/" className="flex items-center gap-2 hover:text-blue-600 transition-colors">
+          <Link
+            href="/"
+            className="flex items-center gap-2 hover:text-blue-600 transition-colors"
+          >
             <Image
               src="/home.png"
               alt="Homepage"
@@ -52,7 +54,10 @@ const Navbar = () => {
             />
             <span>Homepage</span>
           </Link>
-          <Link href="/friends" className="flex items-center gap-2 hover:text-blue-600 transition-colors">
+          <Link
+            href="/friends"
+            className="flex items-center gap-2 hover:text-blue-600 transition-colors"
+          >
             <Image
               src="/friends.png"
               alt="Friends"
@@ -62,7 +67,10 @@ const Navbar = () => {
             />
             <span>Friends</span>
           </Link>
-          <Link href="/stories" className="flex items-center gap-2 hover:text-blue-600 transition-colors">
+          <Link
+            href="/stories"
+            className="flex items-center gap-2 hover:text-blue-600 transition-colors"
+          >
             <Image
               src="/stories.png"
               alt="Stories"
@@ -79,19 +87,21 @@ const Navbar = () => {
           <input
             type="text"
             placeholder="search..."
-            className="bg-transparent outline-none w-40"
+            className="bg-transparent outline-none w-40 sm:w-56"
           />
           <Image src="/search.png" alt="Search" width={14} height={14} />
         </div>
       </div>
 
       {/* RIGHT */}
-      <div className="w-[30%] flex items-center gap-4 xl:gap-8 justify-end">
+      <div className="flex items-center gap-4 xl:gap-8 justify-end w-auto">
         <ClerkLoading>
           <div className="flex items-center gap-4">
-            {/* Icons Skeleton while Clerk loads */}
             {[...Array(3)].map((_, index) => (
-              <div key={index} className="w-6 h-6 bg-gray-300 rounded animate-pulse"></div>
+              <div
+                key={index}
+                className="w-6 h-6 bg-gray-300 rounded animate-pulse"
+              ></div>
             ))}
             <div className="w-8 h-8 bg-gray-300 rounded-full animate-pulse"></div>
           </div>
@@ -106,7 +116,12 @@ const Navbar = () => {
               <Image src="/messages.png" alt="Messages" width={20} height={20} />
             </div>
             <div className="cursor-pointer hover:opacity-80 transition-opacity">
-              <Image src="/notifications.png" alt="Notifications" width={20} height={20} />
+              <Image
+                src="/notifications.png"
+                alt="Notifications"
+                width={20}
+                height={20}
+              />
             </div>
             <UserButton />
           </SignedIn>
@@ -121,7 +136,10 @@ const Navbar = () => {
           </SignedOut>
         </ClerkLoaded>
 
-        <MobileMenu />
+        {/* MOBILE MENU */}
+        <div className="md:hidden">
+          <MobileMenu />
+        </div>
       </div>
     </div>
   );

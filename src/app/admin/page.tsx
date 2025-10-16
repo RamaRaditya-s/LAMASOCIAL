@@ -8,7 +8,6 @@ import UsersPage from "@/components/admin/UsersPage";
 import PostsPage from "@/components/admin/PostsPage";
 import ReportsPage from "@/components/admin/ReportsPage";
 import AnalyticsPage from "@/components/admin/AnalyticsPage";
-import SettingsPage from "@/components/admin/SettingsPage";
 
 export default function AdminPage() {
   const [activePage, setActivePage] = useState("dashboard");
@@ -35,7 +34,6 @@ export default function AdminPage() {
           {activePage === "posts" && <PostsPage />}
           {activePage === "reports" && <ReportsPage />}
           {activePage === "analytics" && <AnalyticsPage />}
-          {activePage === "settings" && <SettingsPage />}
         </main>
       </div>
     </div>
