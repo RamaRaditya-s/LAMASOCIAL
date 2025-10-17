@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import PostsSkeleton from "@/components/skeleton/PostsSkeleton"; 
+import PostsSkeleton from "@/components/skeleton/PostsSkeleton";
 
 interface Post {
   id: string;
@@ -13,6 +13,8 @@ interface Post {
 
 export default function PostsPage() {
   const [posts, setPosts] = useState<Post[] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 2; // jumlah post per halaman
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -59,6 +61,22 @@ export default function PostsPage() {
     return <PostsSkeleton />;
   }
 
+  // Hitung total halaman
+  const totalPages = Math.ceil(posts.length / postsPerPage);
+
+  // Tentukan post yang ditampilkan di halaman saat ini
+  const startIndex = (currentPage - 1) * postsPerPage;
+  const currentPosts = posts.slice(startIndex, startIndex + postsPerPage);
+
+  // Fungsi navigasi halaman
+  const handlePrev = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNext = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
   return (
     <div className="flex flex-col gap-6">
       {/* Header Section */}
@@ -89,7 +107,7 @@ export default function PostsPage() {
               </tr>
             </thead>
             <tbody>
-              {posts.map((post) => (
+              {currentPosts.map((post) => (
                 <tr
                   key={post.id}
                   className="border-b border-gray-50 hover:bg-slate-50 transition"
@@ -127,12 +145,31 @@ export default function PostsPage() {
 
         {/* Pagination Footer */}
         <div className="flex justify-between items-center p-4 border-t border-gray-100">
-          <p className="text-sm text-gray-500">Showing 1–4 of 4 posts</p>
+          <p className="text-sm text-gray-500">
+            Showing {startIndex + 1}–{Math.min(startIndex + postsPerPage, posts.length)} of{" "}
+            {posts.length} posts
+          </p>
           <div className="flex gap-2">
-            <button className="px-3 py-1 text-sm border rounded-lg text-gray-600 hover:bg-gray-100 transition">
+            <button
+              onClick={handlePrev}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 text-sm border rounded-lg transition ${
+                currentPage === 1
+                  ? "text-gray-400 bg-gray-50 cursor-not-allowed"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
               Prev
             </button>
-            <button className="px-3 py-1 text-sm border rounded-lg text-gray-600 hover:bg-gray-100 transition">
+            <button
+              onClick={handleNext}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1 text-sm border rounded-lg transition ${
+                currentPage === totalPages
+                  ? "text-gray-400 bg-gray-50 cursor-not-allowed"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
               Next
             </button>
           </div>

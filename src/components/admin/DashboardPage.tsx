@@ -28,7 +28,6 @@ const dummyReports = [
   { id: "r3", type: "Inappropriate", user: "user789", status: "Resolved", date: "2024-01-18" },
 ];
 
-// Data untuk chart
 const visitorData = [
   { month: "Jan", visitors: 4200 },
   { month: "Feb", visitors: 3800 },
@@ -48,7 +47,11 @@ const postData = [
   { day: "Sun", posts: 180 },
 ];
 
-export default function DashboardPage() {
+interface DashboardPageProps {
+  setActivePage?: (key: string) => void;
+}
+
+export default function DashboardPage({ setActivePage }: DashboardPageProps) {
   const [stats, setStats] = useState<any | null>(null);
 
   useEffect(() => {
@@ -141,7 +144,11 @@ export default function DashboardPage() {
             ))}
           </div>
 
-          <button className="w-full mt-2 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg font-medium transition">
+          {/* Tombol menuju halaman Reports */}
+          <button
+            onClick={() => setActivePage && setActivePage("reports")}
+            className="w-full mt-2 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg font-medium transition"
+          >
             View All Reports
           </button>
         </div>
@@ -167,14 +174,16 @@ export default function DashboardPage() {
         <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">User Growth</h2>
           <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={[
-              { month: "Jan", users: 1000 },
-              { month: "Feb", users: 1400 },
-              { month: "Mar", users: 1800 },
-              { month: "Apr", users: 2400 },
-              { month: "May", users: 3000 },
-              { month: "Jun", users: 3700 },
-            ]}>
+            <LineChart
+              data={[
+                { month: "Jan", users: 1000 },
+                { month: "Feb", users: 1400 },
+                { month: "Mar", users: 1800 },
+                { month: "Apr", users: 2400 },
+                { month: "May", users: 3000 },
+                { month: "Jun", users: 3700 },
+              ]}
+            >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />

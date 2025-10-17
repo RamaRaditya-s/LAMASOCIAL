@@ -13,6 +13,8 @@ interface User {
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 2; // tampilkan 2 user per halaman
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -59,6 +61,19 @@ export default function UsersPage() {
     return <UsersSkeleton />;
   }
 
+  // --- Pagination Logic ---
+  const totalPages = Math.ceil(users.length / usersPerPage);
+  const startIndex = (currentPage - 1) * usersPerPage;
+  const currentUsers = users.slice(startIndex, startIndex + usersPerPage);
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
   return (
     <div className="flex flex-col gap-6">
       {/* Header Section */}
@@ -85,11 +100,13 @@ export default function UsersPage() {
                 <th className="px-6 py-3 font-semibold text-gray-700">Role</th>
                 <th className="px-6 py-3 font-semibold text-gray-700">Status</th>
                 <th className="px-6 py-3 font-semibold text-gray-700">Joined</th>
-                <th className="px-6 py-3 font-semibold text-gray-700 text-right">Actions</th>
+                <th className="px-6 py-3 font-semibold text-gray-700 text-right">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {currentUsers.map((user) => (
                 <tr
                   key={user.id}
                   className="border-b border-gray-50 hover:bg-slate-50 transition"
@@ -139,12 +156,31 @@ export default function UsersPage() {
 
         {/* Pagination Footer */}
         <div className="flex justify-between items-center p-4 border-t border-gray-100">
-          <p className="text-sm text-gray-500">Showing 1–4 of 4 users</p>
+          <p className="text-sm text-gray-500">
+            Showing {startIndex + 1}–
+            {Math.min(startIndex + usersPerPage, users.length)} of {users.length} users
+          </p>
           <div className="flex gap-2">
-            <button className="px-3 py-1 text-sm border rounded-lg text-gray-600 hover:bg-gray-100 transition">
+            <button
+              onClick={handlePrev}
+              disabled={currentPage === 1}
+              className={`px-3 py-1 text-sm border rounded-lg transition ${
+                currentPage === 1
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
               Prev
             </button>
-            <button className="px-3 py-1 text-sm border rounded-lg text-gray-600 hover:bg-gray-100 transition">
+            <button
+              onClick={handleNext}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1 text-sm border rounded-lg transition ${
+                currentPage === totalPages
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
               Next
             </button>
           </div>

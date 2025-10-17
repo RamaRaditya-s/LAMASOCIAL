@@ -8,6 +8,7 @@ import UsersPage from "@/components/admin/UsersPage";
 import PostsPage from "@/components/admin/PostsPage";
 import ReportsPage from "@/components/admin/ReportsPage";
 import AnalyticsPage from "@/components/admin/AnalyticsPage";
+import AdsManagementPage from "@/components/admin/AdsManagement";
 
 export default function AdminPage() {
   const [activePage, setActivePage] = useState("dashboard");
@@ -21,19 +22,26 @@ export default function AdminPage() {
 
   return (
     <div className="flex min-h-screen bg-gray-100 text-gray-800">
+      {/* Sidebar */}
       <div className="h-auto self-start mt-4 ml-4">
         <Sidebar activePage={activePage} setActivePage={setActivePage} />
       </div>
+
+      {/* Main Section */}
       <div className="flex-1 flex flex-col p-6 gap-6">
         <div className="mt-2">
           <Navbar />
         </div>
+
         <main className="flex-1 overflow-y-auto">
-          {activePage === "dashboard" && <DashboardPage />}
+          {activePage === "dashboard" && (
+            <DashboardPage setActivePage={setActivePage} />
+          )}
           {activePage === "users" && <UsersPage />}
           {activePage === "posts" && <PostsPage />}
           {activePage === "reports" && <ReportsPage />}
           {activePage === "analytics" && <AnalyticsPage />}
+          {activePage === "ads" && <AdsManagementPage />}
         </main>
       </div>
     </div>
