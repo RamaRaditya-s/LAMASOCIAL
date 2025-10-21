@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 const UserMediaCard = ({ user }: { user: any }) => {
-  // dummy data (contoh tetap sama)
   const postsWithMedia = [
     { id: 1, img: "/dummycover.png" },
     { id: 2, img: "/dummycover.png" },
@@ -21,19 +20,11 @@ const UserMediaCard = ({ user }: { user: any }) => {
         </Link>
       </div>
 
-      {/* Grid responsif */}
-      <div
-        className="
-          grid gap-4
-          grid-cols-2        /* mobile: 2 kolom */
-          sm:grid-cols-3     /* >=640px: 3 kolom */
-          md:grid-cols-4     /* >=768px: 4 kolom */
-          lg:grid-cols-5     /* >=1024px: 5 kolom */
-        "
-      >
+      {/* BOTTOM (sesuai ukuran Code 1) */}
+      <div className="flex gap-4 justify-between flex-wrap">
         {postsWithMedia.length ? (
           postsWithMedia.map((post) => (
-            <div key={post.id} className="relative w-full aspect-video">
+            <div key={post.id} className="relative w-1/5 h-24">
               <Image
                 src={post.img}
                 alt=""
@@ -43,9 +34,7 @@ const UserMediaCard = ({ user }: { user: any }) => {
             </div>
           ))
         ) : (
-          <p className="col-span-full text-center text-gray-400">
-            No media found!
-          </p>
+          <p className="text-gray-400 text-center w-full">No media found!</p>
         )}
       </div>
     </div>
