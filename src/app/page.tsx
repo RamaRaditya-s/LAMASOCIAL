@@ -34,7 +34,7 @@ const Homepage = () => {
         <div className="flex flex-col gap-6">
           {loading ? <StoriesSkeleton /> : <Stories />}
           {loading ? <AddPostSkeleton /> : <AddPost />}
-          {loading ? <FeedSkeleton /> : <Feed />}
+          <Feed />
         </div>
       </div>
 
