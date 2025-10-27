@@ -6,7 +6,6 @@ import Feed from "@/components/feed/Feed";
 import LeftMenu from "@/components/leftMenu/LeftMenu";
 import RightMenu from "@/components/rightMenu/RightMenu";
 
-// Skeletons
 import LeftMenuSkeleton from "@/components/skeleton/LeftMenuSkeleton";
 import StoriesSkeleton from "@/components/skeleton/StoriesSkeleton";
 import AddPostSkeleton from "@/components/skeleton/AddPostSkeleton";
@@ -15,11 +14,33 @@ import RightMenuSkeleton from "@/components/skeleton/RightMenuSkeleton";
 
 const Homepage = () => {
   const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    // simulasi fetch data 2 detik
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/posts", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
+        const response = await res.json();
+        console.log("Fetched posts:", response);
+        setPosts(response);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -34,7 +55,7 @@ const Homepage = () => {
         <div className="flex flex-col gap-6">
           {loading ? <StoriesSkeleton /> : <Stories />}
           {loading ? <AddPostSkeleton /> : <AddPost />}
-          <Feed />
+          {loading ? <FeedSkeleton /> : <Feed posts={posts} />}
         </div>
       </div>
 
