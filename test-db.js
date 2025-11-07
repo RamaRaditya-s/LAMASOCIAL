@@ -1,28 +1,25 @@
-const mysql = require('mysql2/promise');
+import mysql from "mysql2/promise";
+import dotenv from "dotenv";
 
-async function testConnection() {
+// Baca variabel dari .env.local
+dotenv.config({ path: ".env.local" });
+
+(async () => {
   try {
-    const connection = await mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      password: '', // kosong untuk XAMPP
+    const db = await mysql.createConnection({
+      host: process.env.DATABASE_HOST,
+      user: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
     });
-    
-    console.log('✅ Berhasil connect ke MySQL server!');
-    
-    // Cek databases yang ada
-    const [databases] = await connection.execute('SHOW DATABASES');
-    console.log('📊 Databases yang ada:', databases.map(db => db.Database));
-    
-    await connection.end();
-    
-  } catch (error) {
-    console.error('❌ Gagal connect ke MySQL:', error.message);
-    console.log('💡 Pastikan:');
-    console.log('   - XAMPP MySQL sedang running');
-    console.log('   - Port MySQL default (3306)');
-    console.log('   - Username: root, Password: (kosong)');
-  }
-}
 
-testConnection();
+    console.log("✅ Connected to MySQL:", process.env.DATABASE_NAME);
+
+    const [rows] = await db.query("SELECT COUNT(*) AS total FROM posts");
+    console.log("📊 Total posts:", rows[0].total);
+
+    await db.end();
+  } catch (error) {
+    console.error("❌ Connection failed:", error);
+  }
+})();
