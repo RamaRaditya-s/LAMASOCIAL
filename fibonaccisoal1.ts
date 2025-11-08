@@ -22,7 +22,7 @@ function fibonacciSumInArray(nums: number[]): number {
   return jumlah;
 }
 
-const input = prompt("Masukkan array (contoh: [1,2,3,4,5])");
+const input = prompt("Masukkan array (contoh: [1, 2, 3, 4, 5, 6, 7, 8])");
 if (input) {
   const nums = JSON.parse(input);
   const hasil = fibonacciSumInArray(nums);

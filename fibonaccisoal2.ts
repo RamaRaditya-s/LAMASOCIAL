@@ -26,7 +26,7 @@ function CountFibonacciPairs(nums: number[]): number {
   return jumlah;
 }
 
-const input = prompt("Masukkan array (contoh: [1,2,3,4,5])");
+const input = prompt("Masukkan array (contoh: [1, 2, 3, 4, 5])");
 
 if (input) {
   const nums = JSON.parse(input);
