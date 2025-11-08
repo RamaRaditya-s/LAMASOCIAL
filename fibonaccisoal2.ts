@@ -1,4 +1,4 @@
-function Fibodua(nums: number[]): number {
+function CountFibonacciPairs(nums: number[]): number {
   let fib: number[] = [0, 1];
   let a = 0;
   let b = 1;
@@ -26,6 +26,6 @@ function Fibodua(nums: number[]): number {
   return jumlah;
 }
 
-console.log(Fibodua([1, 2, 3, 4, 5]));
-console.log(Fibodua([8, 13, 21, 10, 15]));
-console.log(Fibodua([4, 6, 9, 10]));
+console.log(CountFibonacciPairs([1, 2, 3, 4, 5]));
+console.log(CountFibonacciPairs([8, 13, 21, 10, 15]));
+console.log(CountFibonacciPairs([4, 6, 9, 10]));
