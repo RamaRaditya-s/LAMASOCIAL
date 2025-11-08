@@ -13,10 +13,10 @@ function CountFibonacciPairs(nums: number[]): number {
 
   let jumlah = 0;
 
-  for (let i=0;i<nums.length;i++) {
-    for (let j =i+1;j<nums.length;j++) {
-      let first=fib.includes(nums[i]);
-      let second=fib.includes(nums[j]);
+  for (let i = 0; i < nums.length; i++) {
+    for (let j = i + 1; j < nums.length; j++) {
+      let first = fib.includes(nums[i]);
+      let second = fib.includes(nums[j]);
       if (first && second) {
         jumlah++;
       }
@@ -26,6 +26,12 @@ function CountFibonacciPairs(nums: number[]): number {
   return jumlah;
 }
 
-console.log(CountFibonacciPairs([1, 2, 3, 4, 5]));
-console.log(CountFibonacciPairs([8, 13, 21, 10, 15]));
-console.log(CountFibonacciPairs([4, 6, 9, 10]));
+const input = prompt("Masukkan array (contoh: [1,2,3,4,5])");
+
+if (input) {
+  const nums = JSON.parse(input);
+  const hasil = CountFibonacciPairs(nums);
+  console.log("Jumlah Pairs Fibonacci:", hasil);
+} else {
+  console.log("Error.");
+}
