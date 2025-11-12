@@ -1,14 +1,31 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const UserMediaCard = ({ user }: { user: any }) => {
-  const postsWithMedia = [
-    { id: 1, img: "/dummycover.png" },
-    { id: 2, img: "/dummycover.png" },
-    { id: 3, img: "/dummycover.png" },
-    { id: 4, img: "/dummycover.png" },
-    { id: 5, img: "/dummycover.png" },
-  ];
+  const [media, setMedia] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMedia = async () => {
+      try {
+        const res = await fetch(
+          `/api/userMedia?userId=${user?.id || 1}`,
+          { cache: "no-store" }
+        );
+        const data = await res.json();
+        setMedia(data);
+      } catch (err) {
+        console.error("Error fetching media:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMedia();
+  }, [user]);
+
+  if (loading) return <p className="text-gray-400 text-center">Loading...</p>;
 
   return (
     <div className="p-4 bg-white rounded-lg shadow-md text-sm flex flex-col gap-4">
@@ -20,13 +37,13 @@ const UserMediaCard = ({ user }: { user: any }) => {
         </Link>
       </div>
 
-      {/* BOTTOM (sesuai ukuran Code 1) */}
+      {/* BOTTOM */}
       <div className="flex gap-4 justify-between flex-wrap">
-        {postsWithMedia.length ? (
-          postsWithMedia.map((post) => (
+        {media.length ? (
+          media.map((post) => (
             <div key={post.id} className="relative w-1/5 h-24">
               <Image
-                src={post.img}
+                src={post.image_url}
                 alt=""
                 fill
                 className="object-cover rounded-md"
