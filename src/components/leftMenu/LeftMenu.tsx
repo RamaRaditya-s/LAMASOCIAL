@@ -18,7 +18,7 @@ export default function LeftMenu({ type }: LeftMenuProps) {
         <MenuItem href="/profile" icon="/events.png" label="My Posts" />
         <Divider />
 
-        <MenuItem href="/activity" icon="/market.png" label="Activity" />
+        <MenuItem href="/profile" icon="/market.png" label="Activity" />
         <Divider />
 
         <MenuItem href="/events" icon="/events.png" label="Events" />

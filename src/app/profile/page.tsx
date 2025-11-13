@@ -5,21 +5,6 @@ import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import ProfilePageSkeleton from "@/components/skeleton/ProfilePageSkeleton";
 
-// ---- Data Dummy ----
-const dummyUser = {
-  username: "john_doe",
-  name: "John",
-  surname: "Doe",
-  cover: "/dummyCover.png",
-  avatar: "/dummyCover.png",
-  _count: {
-    posts: 12,
-    followers: 340,
-    followings: 180,
-  },
-};
-// ---------------------
-
 function FeedPlaceholder({ username }: { username?: string }) {
   return (
     <div className="p-4 bg-white rounded-md shadow-sm">
@@ -56,13 +41,13 @@ function LeftMenuPlaceholder() {
 
 const Feed = dynamic(
   () => import("@/components/feed/Feed").then((mod) => mod.default ?? mod),
-  { ssr: false, loading: () => <FeedPlaceholder username={dummyUser.username} /> }
+  { ssr: false, loading: () => <FeedPlaceholder /> }
 );
 
 const RightMenu = dynamic(
   () =>
     import("@/components/rightMenu/RightMenu").then((mod) => mod.default ?? mod),
-  { ssr: false, loading: () => <RightMenuPlaceholder user={dummyUser} /> }
+  { ssr: false, loading: () => <RightMenuPlaceholder user={{ _count: {} }} /> }
 );
 
 const LeftMenu = dynamic(
@@ -71,19 +56,25 @@ const LeftMenu = dynamic(
 );
 
 export default function ProfilePage() {
-  const user = dummyUser;
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
+    async function fetchUser() {
+      try {
+        const res = await fetch("/api/users/john_doe");
+        const data = await res.json();
+        setUser(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchUser();
   }, []);
 
-  if (loading) {
+  if (loading || !user) {
     return <ProfilePageSkeleton />;
   }
 
@@ -114,7 +105,9 @@ export default function ProfilePage() {
             </div>
 
             <h1 className="mt-20 mb-4 text-2xl font-medium">
-              {user.name && user.surname ? `${user.name} ${user.surname}` : user.username}
+              {user.name && user.surname
+                ? `${user.name} ${user.surname}`
+                : user.username}
             </h1>
 
             <div className="flex items-center justify-center gap-12 mb-4">
@@ -138,7 +131,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* RIGHT MENU (dynamic) */}
+      {/* RIGHT MENU */}
       <div className="hidden lg:block w-[30%]">
         <RightMenu />
       </div>
