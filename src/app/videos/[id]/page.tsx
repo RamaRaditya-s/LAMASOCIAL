@@ -14,12 +14,11 @@ function LeftMenuPlaceholder() {
   );
 }
 
-function RightMenuPlaceholder({ user }: { user: any }) {
+function RightMenuPlaceholder() {
   return (
     <div className="p-4 bg-white rounded-md shadow-sm sticky top-6">
-      <h3 className="font-medium mb-2">About {user.name}</h3>
-      <p className="text-sm text-gray-600">Followers: {user._count?.followers}</p>
-      <p className="text-sm text-gray-600">Following: {user._count?.followings}</p>
+      <h3 className="font-medium mb-2">About Creator</h3>
+      <p className="text-sm text-gray-600">Loading user data...</p>
     </div>
   );
 }
@@ -32,84 +31,13 @@ const LeftMenu = dynamic(() => import("@/components/leftMenu/LeftMenu"), {
 
 const RightMenu = dynamic(() => import("@/components/rightMenu/RightMenu"), { 
   ssr: false,
-  loading: () => <RightMenuPlaceholder user={dummyUser} />
+  loading: () => <RightMenuPlaceholder />
 });
 
 const VideoPlayerComponent = dynamic(() => import("@/app/videos/VideoPlayer"), {
   ssr: false,
   loading: () => <VideoPlayerSkeleton />
 });
-
-/* ------------------ Dummy Data ------------------ */
-const dummyUser = { 
-  username: "john_doe", 
-  name: "John Doe", 
-  avatar: "/dummyCover.png",
-  _count: { posts: 12, followers: 340, followings: 180 }
-};
-
-const allVideos = [
-  { 
-    id: "m1", 
-    title: "My Travel Vlog", 
-    thumb: "/dummyCover.png", 
-    videoUrl: "/sample-video.mp4",
-    views: 980, 
-    createdAt: "2025-09-21",
-    description: "Amazing travel experience through beautiful landscapes and cultures.",
-    duration: "15:30",
-    uploader: "john_doe",
-    uploaderName: "John Doe",
-    uploaderAvatar: "/dummyCover.png",
-    likes: 45,
-    comments: 12
-  },
-  { 
-    id: "m2", 
-    title: "Workout Routine", 
-    thumb: "/dummyCover.png", 
-    videoUrl: "/sample-video2.mp4",
-    views: 650, 
-    createdAt: "2025-09-22",
-    description: "My daily workout routine for staying fit and healthy.",
-    duration: "08:15",
-    uploader: "john_doe",
-    uploaderName: "John Doe",
-    uploaderAvatar: "/dummyCover.png",
-    likes: 32,
-    comments: 8
-  },
-  { 
-    id: "e1", 
-    title: "Nature Documentary", 
-    thumb: "/dummyCover.png", 
-    videoUrl: "/sample-video3.mp4",
-    views: 5230, 
-    createdAt: "2025-09-20",
-    uploader: "alice",
-    uploaderName: "Alice Johnson",
-    uploaderAvatar: "/dummyCover.png",
-    description: "Beautiful nature documentary showcasing wildlife and ecosystems.",
-    duration: "22:45",
-    likes: 234,
-    comments: 56
-  },
-  { 
-    id: "e2", 
-    title: "Street Food Tour", 
-    thumb: "/dummyCover.png", 
-    videoUrl: "/sample-video4.mp4",
-    views: 4310, 
-    createdAt: "2025-09-19",
-    uploader: "bob",
-    uploaderName: "Bob Smith",
-    uploaderAvatar: "/dummyCover.png",
-    description: "Exploring delicious street food around the city.",
-    duration: "18:20",
-    likes: 189,
-    comments: 34
-  },
-];
 
 /* ------------------ Skeleton Components ------------------ */
 function VideoPlayerSkeleton() {
@@ -134,39 +62,73 @@ function RelatedVideoSkeleton() {
   );
 }
 
+// Interface untuk data video
+interface Video {
+  id: number;
+  title: string;
+  url: string;
+  thumb: string;
+  uploader: string;
+  views: number;
+  duration: string;
+  created_at: string;
+  description?: string;
+  uploaderName?: string;
+  uploaderAvatar?: string;
+  likes?: number;
+  comments?: number;
+}
+
 export default function VideoPlayerPage() {
   const params = useParams();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [video, setVideo] = useState<any>(null);
-  const [relatedVideos, setRelatedVideos] = useState<any[]>([]);
+  const [video, setVideo] = useState<Video | null>(null);
+  const [relatedVideos, setRelatedVideos] = useState<Video[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Simulate API call to fetch video data
-    const timer = setTimeout(() => {
-      const videoId = params.id as string;
-      const foundVideo = allVideos.find(v => v.id === videoId);
-      
-      if (foundVideo) {
-        setVideo(foundVideo);
-        // Simulate related videos (exclude current video)
-        setRelatedVideos(allVideos.filter(v => v.id !== videoId).slice(0, 4));
-      }
-      setLoading(false);
-    }, 1000);
+    const fetchVideoData = async () => {
+      try {
+        setLoading(true);
+        const videoId = params.id as string;
+        
+        // Fetch video data
+        const videoResponse = await fetch(`/api/videos/${videoId}`);
+        if (!videoResponse.ok) {
+          throw new Error('Video not found');
+        }
+        const videoData = await videoResponse.json();
+        setVideo(videoData);
 
-    return () => clearTimeout(timer);
+        // Fetch related videos (videos from same uploader)
+        const relatedResponse = await fetch(`/api/videos?uploader=${videoData.uploader}&exclude=${videoId}&limit=4`);
+        if (relatedResponse.ok) {
+          const relatedData = await relatedResponse.json();
+          setRelatedVideos(relatedData);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load video');
+        console.error('Error fetching video:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideoData();
   }, [params.id]);
 
   if (loading) {
     return <VideoPageSkeleton />;
   }
 
-  if (!video) {
+  if (error || !video) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Video Not Found</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            {error || "Video Not Found"}
+          </h2>
           <button 
             onClick={() => router.push('/videos')}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
@@ -186,7 +148,7 @@ export default function VideoPlayerPage() {
         {/* Video Player */}
         <section className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
           <VideoPlayerComponent 
-            videoUrl={video.videoUrl}
+            videoUrl={video.url}
             title={video.title}
             autoPlay={true}
           />
@@ -199,15 +161,15 @@ export default function VideoPlayerPage() {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden">
                   <Image 
-                    src={video.uploaderAvatar} 
-                    alt={video.uploaderName}
+                    src={video.uploaderAvatar || "/dummyCover.png"} 
+                    alt={video.uploaderName || video.uploader}
                     width={40}
                     height={40}
                     className="object-cover"
                   />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{video.uploaderName}</p>
+                  <p className="font-medium text-gray-900">{video.uploaderName || video.uploader}</p>
                   <p className="text-sm text-gray-500">{video.views.toLocaleString()} views</p>
                 </div>
               </div>
@@ -217,14 +179,14 @@ export default function VideoPlayerPage() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                   </svg>
-                  <span>{video.likes}</span>
+                  <span>{video.likes || 0}</span>
                 </button>
                 
                 <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
-                  <span>{video.comments}</span>
+                  <span>{video.comments || 0}</span>
                 </button>
                 
                 <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
@@ -238,9 +200,11 @@ export default function VideoPlayerPage() {
             
             {/* Video Description */}
             <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-gray-700 whitespace-pre-line">{video.description}</p>
+              <p className="text-gray-700 whitespace-pre-line">
+                {video.description || "No description available."}
+              </p>
               <p className="text-sm text-gray-500 mt-2">
-                Uploaded on {new Date(video.createdAt).toLocaleDateString('en-US', {
+                Uploaded on {new Date(video.created_at).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'
@@ -252,7 +216,9 @@ export default function VideoPlayerPage() {
 
         {/* Comments Section */}
         <section className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-          <h3 className="font-semibold text-xl text-gray-900 mb-4">Comments ({video.comments})</h3>
+          <h3 className="font-semibold text-xl text-gray-900 mb-4">
+            Comments ({video.comments || 0})
+          </h3>
           <div className="space-y-4">
             <div className="flex gap-3">
               <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0"></div>
@@ -289,7 +255,7 @@ export default function VideoPlayerPage() {
                 >
                   <div className="w-40 h-24 relative rounded-md overflow-hidden flex-shrink-0">
                     <Image
-                      src={relatedVideo.thumb}
+                      src={relatedVideo.thumb || "/dummyCover.png"}
                       alt={relatedVideo.title}
                       fill
                       className="object-cover"
@@ -302,13 +268,20 @@ export default function VideoPlayerPage() {
                     <h4 className="font-medium text-gray-900 text-sm line-clamp-2 mb-1">
                       {relatedVideo.title}
                     </h4>
-                    <p className="text-xs text-gray-500">{relatedVideo.uploaderName}</p>
+                    <p className="text-xs text-gray-500">
+                      {relatedVideo.uploaderName || relatedVideo.uploader}
+                    </p>
                     <p className="text-xs text-gray-500">
                       {relatedVideo.views.toLocaleString()} views
                     </p>
                   </div>
                 </div>
               ))}
+              {relatedVideos.length === 0 && (
+                <p className="text-sm text-gray-500 text-center py-4">
+                  No related videos found
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -356,7 +329,7 @@ function VideoPageSkeleton() {
 
       <div className="hidden lg:block w-[30%]">
         <div className="sticky top-6 space-y-6">
-          <RightMenuPlaceholder user={dummyUser} />
+          <RightMenuPlaceholder />
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
             <div className="h-6 bg-gray-300 rounded animate-pulse w-32 mb-4"></div>
             <div className="space-y-4">

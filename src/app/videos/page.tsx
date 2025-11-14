@@ -15,12 +15,11 @@ function LeftMenuPlaceholder() {
   );
 }
 
-function RightMenuPlaceholder({ user }: { user: any }) {
+function RightMenuPlaceholder() {
   return (
     <div className="p-4 bg-white rounded-md shadow-sm sticky top-6">
-      <h3 className="font-medium mb-2">About {user.name}</h3>
-      <p className="text-sm text-gray-600">Followers: {user._count?.followers}</p>
-      <p className="text-sm text-gray-600">Following: {user._count?.followings}</p>
+      <h3 className="font-medium mb-2">About Creator</h3>
+      <p className="text-sm text-gray-600">Loading user data...</p>
     </div>
   );
 }
@@ -33,42 +32,81 @@ const LeftMenu = dynamic(() => import("@/components/leftMenu/LeftMenu"), {
 
 const RightMenu = dynamic(() => import("@/components/rightMenu/RightMenu"), { 
   ssr: false,
-  loading: () => <RightMenuPlaceholder user={dummyUser} />
+  loading: () => <RightMenuPlaceholder />
 });
 
-const dummyUser = { 
-  username: "john_doe", 
-  name: "John Doe", 
-  avatar: "/dummyCover.png",
-  _count: { posts: 12, followers: 340, followings: 180 }
-};
-
-const myVideos = [
-  { id: "m1", title: "My Travel Vlog - Amazing journey through mountains and beaches", thumb: "/dummyCover.png", views: 980, createdAt: "2025-09-21", duration: "15:30" },
-  { id: "m2", title: "Workout Routine - Full body exercise for beginners", thumb: "/dummyCover.png", views: 650, createdAt: "2025-09-22", duration: "08:15" },
-];
-
-const exploreVideos = [
-  { id: "e1", title: "Nature Documentary - Wildlife in the Amazon rainforest", thumb: "/dummyCover.png", uploader: "alice", views: 5230, createdAt: "2025-09-20", duration: "22:45" },
-  { id: "e2", title: "Street Food Tour - Exploring delicious food around Asia", thumb: "/dummyCover.png", uploader: "bob", views: 4310, createdAt: "2025-09-19", duration: "18:20" },
-  { id: "e3", title: "Tech Review - Latest smartphone features and performance", thumb: "/dummyCover.png", uploader: "charlie", views: 2120, createdAt: "2025-09-18", duration: "12:10" },
-  { id: "e4", title: "Funny Cats Compilation - Hilarious moments with cute cats", thumb: "/dummyCover.png", uploader: "dina", views: 6700, createdAt: "2025-09-18", duration: "09:45" },
-];
+// Interface untuk data video
+interface Video {
+  id: number;
+  title: string;
+  url: string;
+  thumb: string;
+  uploader: string;
+  views: number;
+  duration: string;
+  created_at: string;
+  uploaderName?: string;
+}
 
 export default function VideosPage() {
   const [loading, setLoading] = useState(true);
+  const [myVideos, setMyVideos] = useState<Video[]>([]);
+  const [exploreVideos, setExploreVideos] = useState<Video[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    const fetchVideos = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch all videos
+        const response = await fetch('/api/videos');
+        if (!response.ok) {
+          throw new Error('Failed to fetch videos');
+        }
+        
+        const allVideos: Video[] = await response.json();
+        
+        // For demo purposes, assume current user is "john_doe"
+        // In real app, you would get this from authentication context
+        const currentUser = "john_doe";
+        
+        // Split videos into "My Videos" and "Explore Videos"
+        const myVideosData = allVideos.filter(video => video.uploader === currentUser);
+        const exploreVideosData = allVideos.filter(video => video.uploader !== currentUser);
+        
+        setMyVideos(myVideosData);
+        setExploreVideos(exploreVideosData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load videos');
+        console.error('Error fetching videos:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
+    fetchVideos();
   }, []);
 
   if (loading) {
     return <VideosPageSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Error Loading Videos</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -107,6 +145,14 @@ export default function VideosPage() {
             {myVideos.map((v) => (
               <VideoCard key={v.id} data={v} />
             ))}
+            {myVideos.length === 0 && (
+              <div className="col-span-full text-center py-8">
+                <p className="text-gray-500 mb-4">You haven't uploaded any videos yet.</p>
+                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                  Upload Your First Video
+                </button>
+              </div>
+            )}
           </div>
         </section>
 
@@ -122,6 +168,11 @@ export default function VideosPage() {
             {exploreVideos.map((v) => (
               <VideoCard key={v.id} data={v} showUploader />
             ))}
+            {exploreVideos.length === 0 && (
+              <div className="col-span-full text-center py-8">
+                <p className="text-gray-500">No videos available to explore.</p>
+              </div>
+            )}
           </div>
         </section>
       </main>
@@ -133,27 +184,16 @@ export default function VideosPage() {
   );
 }
 
-type VideoType = {
-  id: string;
-  title: string;
-  thumb: string;
-  views: number;
-  createdAt: string;
-  uploader?: string;
-  duration?: string;
-};
-
 function VideoCard({
   data,
   showUploader,
 }: {
-  data: VideoType;
+  data: Video;
   showUploader?: boolean;
 }) {
   const router = useRouter();
 
   const handleVideoClick = () => {
-    // Navigate to video player page
     router.push(`/videos/${data.id}`);
   };
 
@@ -165,7 +205,7 @@ function VideoCard({
       {/* Thumbnail Container - Horizontal/Landscape */}
       <div className="relative w-full aspect-video overflow-hidden">
         <Image
-          src={data.thumb}
+          src={data.thumb || "/dummyCover.png"}
           alt={data.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -196,11 +236,11 @@ function VideoCard({
         
         <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
           <span>{data.views.toLocaleString()} views</span>
-          <span>{new Date(data.createdAt).toLocaleDateString()}</span>
+          <span>{new Date(data.created_at).toLocaleDateString()}</span>
         </div>
         
         {showUploader && (
-          <p className="text-xs text-gray-400">by {data.uploader}</p>
+          <p className="text-xs text-gray-400">by {data.uploaderName || data.uploader}</p>
         )}
       </div>
     </div>
