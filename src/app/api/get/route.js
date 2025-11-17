@@ -5,7 +5,7 @@ export async function GET() {
     try {
         const db = await createConnection();
 
-        // Ambil user id=1
+        // Ambil user id
         const [users] = await db.query(
             `SELECT 
                 id, username, name, surname, avatar_url, cover_url,
