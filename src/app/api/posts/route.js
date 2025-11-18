@@ -1,11 +1,9 @@
-import { createConnection } from "../../../../lib/db.js";
-import { NextResponse } from "next/server";
+    import { NextResponse } from "next/server";
+    import { getPost } from "@/services/post.service";
 
 export async function GET() {
     try {
-        const db =  await createConnection();
-        const sql = 'SELECT * FROM posts';
-        const [posts] = await db.query(sql);
+        const posts = await getPost(10, 0);
         return NextResponse.json(posts);
     } catch (error) {
         console.log(error)
